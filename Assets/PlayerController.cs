@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-	Rigidbody2D rb;
-	float max_jump_charge=15f;
-	float min_jump_charge=5f;
-	float jump_charge;
 	public float speed = 10f;
+	private float max_jump_charge = 15f;
+	private float min_jump_charge = 5f;
+	private float jump_charge;
 	private bool isGrounded = false;
 	private bool doJump = false;
 	private float move_h;
 
+	Rigidbody2D rb;
 	Animator anim;
 
 	// Use this for initialization
@@ -29,10 +29,10 @@ public class PlayerController : MonoBehaviour {
 
 		if(isGrounded){	//charging the jump
 			if(Input.GetButton("Jump") && (jump_charge <= max_jump_charge) ) {
-				jump_charge += Time.deltaTime * 7f;
+				jump_charge += Time.deltaTime * 5f;
 
-				anim.SetBool("charge_jump", true);
-				anim.speed = 1.25f * jump_charge/10f;
+				anim.SetBool("charge_jump", true);	//change state to crouching animation
+				anim.speed = 1f * jump_charge/10f; //gradually speed up animation
 			}
 
 			if(Input.GetButtonUp("Jump")){	//jumping
@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour {
 				//rb.velocity += new Vector2(0f,jump_charge);
 				doJump = true;
 				isGrounded = false;
-				anim.SetBool("isGrounded", isGrounded);
+				anim.SetBool("isGrounded", isGrounded);	
 				anim.SetBool("charge_jump", false);
 				anim.speed = 1;
 			}
@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour {
 	void FixedUpdate(){  //moved all physics into FixedUpdate
 		transform.position += new Vector3(move_h,0f) * Time.fixedDeltaTime * speed;
 
-		if(doJump){
+		if(doJump){	//if you pressed jump in update
 			rb.velocity += new Vector2(0f, jump_charge);
 			doJump = false;
 			jump_charge = min_jump_charge;
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour {
 		if(col.collider.CompareTag("ground")){	//landing
 			isGrounded = true;
 
-			anim.SetBool("isGrounded", isGrounded);
+			anim.SetBool("isGrounded", isGrounded);	//go back to idle animation
 		}
 	}
 
